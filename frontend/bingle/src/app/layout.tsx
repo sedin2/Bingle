@@ -14,8 +14,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='en'>
-      <body className={notoSans.className}>{children}</body>
+    <html lang='en' className={notoSans.className}>
+      <body className='flex flex-col w-full max-w-screen-2xl mx-auto overflow-auto'>
+        {children}
+      </body>
     </html>
   );
 }
