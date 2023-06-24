@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import LoginButton from './LoginButton';
 
 export default function Navbar() {
   return (
@@ -6,6 +7,7 @@ export default function Navbar() {
       <h1 className='text-3xl font-bold'>
         <Link href='/'>Bingle</Link>
       </h1>
+      <LoginButton></LoginButton>
     </div>
   );
 }
