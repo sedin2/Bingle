@@ -1,7 +1,11 @@
 package com.bingle.oauth;
 
+import com.bingle.account.model.Account;
+import com.bingle.account.service.AccountService;
 import com.bingle.common.dto.ApiResponseDto;
 import com.bingle.oauth.dto.AccessTokenResponse;
+import com.bingle.oauth.dto.KakaoUserInformationResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +24,7 @@ import java.util.LinkedHashMap;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/oauth/callback")
 public class OAuthController {
 
@@ -34,6 +39,10 @@ public class OAuthController {
 
     @Value("${REDIRECT_URI}")
     private String redirectURI;
+
+    private String userInformationURI = "https://kapi.kakao.com/v2/user/me";
+
+    private final AccountService accountService;
 
     @GetMapping("/kakao")
     public ResponseEntity<ApiResponseDto> getCode(@RequestParam String code) {
@@ -51,11 +60,34 @@ public class OAuthController {
                 .body(BodyInserters.fromFormData(requestBody))
                 .retrieve()
                 .bodyToMono(AccessTokenResponse.class)
-                .subscribe(response -> log.debug("kakao AccessToken", response));
+                .subscribe(response -> getUserInformation(response.getAccessToken()));
 
         LinkedHashMap<String, String> mockToken = new LinkedHashMap<>();
         mockToken.put("accessToken", "blahblah");
         mockToken.put("refreshToken", "blahblah");
         return ResponseEntity.ok(ApiResponseDto.OK(mockToken));
+    }
+
+    private void getUserInformation(String accessToken) {
+        WebClient otherClient = WebClient.create();
+
+        otherClient.get()
+                .uri(userInformationURI)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .bodyToMono(KakaoUserInformationResponse.class)
+                .subscribe(response -> {
+
+                    Account account = Account.builder()
+                            .kakaoId(response.getId())
+                            .connectedAt(response.getConnectedAt())
+                            .email(response.getKakaoAccount().getEmail())
+                            .isEmailVerified(response.getKakaoAccount().getIsEmailVerified())
+                            .nickname(response.getKakaoAccount().getProfile().getNickname())
+                            .build();
+
+                    accountService.saveAccount(account);
+                });
     }
 }
