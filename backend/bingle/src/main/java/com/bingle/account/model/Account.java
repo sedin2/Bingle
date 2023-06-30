@@ -10,6 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
@@ -30,14 +32,18 @@ public class Account {
     @Column(name = "connected_at")
     private LocalDateTime connectedAt;
 
-    @Column(unique = true, nullable = false, length = 45)
+    @Column(name = "email", unique = true, nullable = false, length = 45)
     private String email;
 
     @Column(name = "is_email_verified")
     private Boolean isEmailVerified;
 
-    @Column(nullable = false, length = 8)
+    @Column(name = "nickname", nullable = false, length = 8)
     private String nickname;
+
+    @OneToOne
+    @JoinColumn(name = "access_token_id")
+    private AccessToken accessToken;
 
     @Builder
     private Account(Long id, Long kakaoId, LocalDateTime connectedAt,
