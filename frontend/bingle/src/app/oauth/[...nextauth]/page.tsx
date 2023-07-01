@@ -1,16 +1,37 @@
 'use client';
 import useFetcher from '@/app/hooks/useFetcher';
-// import { fetcher } from '@/app/service/oAuth';
+import useToken from '@/app/hooks/useToken';
 import { redirect, useSearchParams } from 'next/navigation';
+import { SetStateAction, Dispatch, useEffect } from 'react';
 import { PacmanLoader } from 'react-spinners';
-import useSWR from 'swr';
+
+type responseData = {
+  code: string;
+  message: string;
+  data: {
+    accessToken: string;
+    refreshToken: string;
+  };
+};
 
 export default function OAuthPage() {
   const searchParams = useSearchParams();
   const code = searchParams.get('code');
   const getString = `http://localhost:8080/oauth/callback/kakao?code=${code}`;
-  //   const { data, error, isLoading } = useSWR(getString, fetcher);
-  const { data, error, isLoading } = useFetcher(getString);
+  const setAccessToken = useToken()[1] as Dispatch<SetStateAction<string>>;
+  const {
+    data,
+    error,
+    isLoading,
+  }: { data: responseData; error: any; isLoading: boolean } =
+    useFetcher(getString);
+  useEffect(() => {
+    if (data?.code == 'OK') {
+      console.log(data.data.accessToken);
+      setAccessToken(data.data.accessToken);
+      redirect('/');
+    }
+  }, [data]);
   return (
     <div>
       {isLoading && (
@@ -19,7 +40,7 @@ export default function OAuthPage() {
         </div>
       )}
       {error && <h1>error!</h1>}
-      {data && redirect('/')}
+      {data && <h1>`${data.message}`</h1>}
     </div>
   );
 }
