@@ -47,12 +47,17 @@ public class Account {
 
     @Builder
     private Account(Long id, Long kakaoId, LocalDateTime connectedAt,
-                    String email, Boolean isEmailVerified, String nickname) {
+                    String email, Boolean isEmailVerified, String nickname, AccessToken accessToken) {
         this.id = id;
         this.kakaoId = kakaoId;
         this.connectedAt = connectedAt;
         this.email = email;
         this.isEmailVerified = isEmailVerified;
         this.nickname = nickname;
+        this.accessToken = accessToken;
+    }
+
+    public void allocateAccessToken(AccessToken accessToken) {
+        this.accessToken = accessToken;
     }
 }
