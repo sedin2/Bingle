@@ -1,11 +1,10 @@
 package com.bingle.oauth.dto;
 
+import com.bingle.account.model.AccessToken;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
-@ToString
 public class AccessTokenResponse {
 
     @JsonProperty("access_token")
@@ -23,4 +22,12 @@ public class AccessTokenResponse {
     @JsonProperty("refresh_token_expires_in")
     private int refreshTokenExpiresIn;
 
+    public AccessToken toEntity() {
+        return AccessToken.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .expiresIn(expiresIn)
+                .refreshTokenExpiresIn(refreshTokenExpiresIn)
+                .build();
+    }
 }
