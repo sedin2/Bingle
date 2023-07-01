@@ -1,6 +1,7 @@
 package com.bingle.account.model;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,7 +9,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -29,11 +29,18 @@ public class AccessToken {
     private String refreshToken;
 
     @Column(name = "expires_in")
-    private int expiresIn;
+    private Integer expiresIn;
 
     @Column(name = "refresh_token_expires_in")
-    private int refreshTokenExpiresIn;
+    private Integer refreshTokenExpiresIn;
 
-    @OneToOne(mappedBy = "accessToken")
-    private Account account;
+    @Builder
+    private AccessToken(Long id, String accessToken, String refreshToken,
+                        Integer expiresIn, Integer refreshTokenExpiresIn) {
+        this.id = id;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.expiresIn = expiresIn;
+        this.refreshTokenExpiresIn = refreshTokenExpiresIn;
+    }
 }
