@@ -1,6 +1,7 @@
 package com.bingle.oauth;
 
-import com.bingle.account.model.Account;
+import com.bingle.account.dto.AccessTokenDto;
+import com.bingle.account.service.AccessTokenService;
 import com.bingle.account.service.AccountService;
 import com.bingle.common.dto.ApiResponseDto;
 import com.bingle.oauth.dto.AccessTokenResponse;
@@ -28,8 +29,15 @@ import java.util.LinkedHashMap;
 @RequestMapping("/oauth/callback")
 public class OAuthController {
 
-    @Value("${URL}")
-    private String url;
+    private static final String AUTHORIZATION = "Authorization";
+    private static final String BEARER_SCHEME = "Bearer ";
+    private static final String GRANT_TYPE = "grant_type";
+    private static final String CLIENT_ID = "client_id";
+    private static final String REDIRECT_URI = "redirect_uri";
+    private static final String CODE = "code";
+
+    @Value("${OAUTH_TOKEN_URI}")
+    private String oauthTokenURI;
 
     @Value("${GRANT_TYPE}")
     private String grantType;
@@ -40,27 +48,33 @@ public class OAuthController {
     @Value("${REDIRECT_URI}")
     private String redirectURI;
 
-    private String userInformationURI = "https://kapi.kakao.com/v2/user/me";
+    @Value("${USER_INFORMATION_URI}")
+    private String userInformationURI;
 
     private final AccountService accountService;
+
+    private final AccessTokenService accessTokenService;
 
     @GetMapping("/kakao")
     public ResponseEntity<ApiResponseDto> getCode(@RequestParam String code) {
         WebClient webClient = WebClient.create();
 
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("grant_type", grantType);
-        requestBody.add("client_id", clientId);
-        requestBody.add("redirect_uri", redirectURI);
-        requestBody.add("code", code);
+        requestBody.add(GRANT_TYPE, grantType);
+        requestBody.add(CLIENT_ID, clientId);
+        requestBody.add(REDIRECT_URI, redirectURI);
+        requestBody.add(CODE, code);
 
         webClient.post()
-                .uri(url)
+                .uri(oauthTokenURI)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .body(BodyInserters.fromFormData(requestBody))
                 .retrieve()
                 .bodyToMono(AccessTokenResponse.class)
-                .subscribe(response -> getUserInformation(response.getAccessToken()));
+                .subscribe(accessTokenResponse -> {
+                    AccessTokenDto accessTokenDto = accessTokenService.createAccessToken(accessTokenResponse);
+                    getUserInformation(accessTokenDto);
+                });
 
         LinkedHashMap<String, String> mockToken = new LinkedHashMap<>();
         mockToken.put("accessToken", "blahblah");
@@ -68,26 +82,16 @@ public class OAuthController {
         return ResponseEntity.ok(ApiResponseDto.OK(mockToken));
     }
 
-    private void getUserInformation(String accessToken) {
+    private void getUserInformation(AccessTokenDto accessTokenDto) {
         WebClient otherClient = WebClient.create();
 
         otherClient.get()
                 .uri(userInformationURI)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .header("Authorization", "Bearer " + accessToken)
+                .header(AUTHORIZATION, BEARER_SCHEME + accessTokenDto.getAccessToken())
                 .retrieve()
                 .bodyToMono(KakaoUserInformationResponse.class)
-                .subscribe(response -> {
-
-                    Account account = Account.builder()
-                            .kakaoId(response.getId())
-                            .connectedAt(response.getConnectedAt())
-                            .email(response.getKakaoAccount().getEmail())
-                            .isEmailVerified(response.getKakaoAccount().getIsEmailVerified())
-                            .nickname(response.getKakaoAccount().getProfile().getNickname())
-                            .build();
-
-                    accountService.saveAccount(account);
-                });
+                .subscribe(userInformationResponse ->
+                        accountService.createAccount(accessTokenDto, userInformationResponse));
     }
 }
