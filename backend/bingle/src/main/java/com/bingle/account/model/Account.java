@@ -1,19 +1,21 @@
 package com.bingle.account.model;
 
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -41,23 +43,23 @@ public class Account {
     @Column(name = "nickname", nullable = false, length = 8)
     private String nickname;
 
-    @OneToOne
-    @JoinColumn(name = "access_token_id")
-    private AccessToken accessToken;
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AccessToken> accessTokens = new ArrayList<>();
 
     @Builder
     private Account(Long id, Long kakaoId, LocalDateTime connectedAt,
-                    String email, Boolean isEmailVerified, String nickname, AccessToken accessToken) {
+                    String email, Boolean isEmailVerified, String nickname) {
         this.id = id;
         this.kakaoId = kakaoId;
         this.connectedAt = connectedAt;
         this.email = email;
         this.isEmailVerified = isEmailVerified;
         this.nickname = nickname;
-        this.accessToken = accessToken;
     }
 
-    public void allocateAccessToken(AccessToken accessToken) {
-        this.accessToken = accessToken;
+    public Account addAccessToken(AccessToken accessToken) {
+        accessToken.addAccount(this);
+        accessTokens.add(accessToken);
+        return this;
     }
 }
