@@ -1,6 +1,7 @@
 package com.bingle.oauth;
 
 import com.bingle.account.dto.AccessTokenDto;
+import com.bingle.account.dto.AccountDto;
 import com.bingle.account.service.AccessTokenService;
 import com.bingle.account.service.AccountService;
 import com.bingle.common.dto.ApiResponseDto;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.LinkedHashMap;
 
@@ -56,42 +58,46 @@ public class OAuthController {
     private final AccessTokenService accessTokenService;
 
     @GetMapping("/kakao")
-    public ResponseEntity<ApiResponseDto> getCode(@RequestParam String code) {
+    public Mono<ResponseEntity<ApiResponseDto>> getCode(@RequestParam String code) {
         WebClient webClient = WebClient.create();
 
+        return webClient.post()
+                .uri(oauthTokenURI)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .body(BodyInserters.fromFormData(createRequestBody(code)))
+                .retrieve()
+                .bodyToMono(AccessTokenResponse.class)
+                .flatMap(accessTokenResponse -> getUserInformation(webClient, accessTokenResponse))
+                .map(accountDto -> {
+                    LinkedHashMap<String, String> mockToken = new LinkedHashMap<>();
+                    mockToken.put("accessToken", "blahblah");
+                    mockToken.put("refreshToken", "blahblah");
+                    ApiResponseDto responseDto = ApiResponseDto.OK(mockToken);
+                    return ResponseEntity.ok(responseDto);
+                });
+    }
+
+    private MultiValueMap<String, String> createRequestBody(String code) {
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+
         requestBody.add(GRANT_TYPE, grantType);
         requestBody.add(CLIENT_ID, clientId);
         requestBody.add(REDIRECT_URI, redirectURI);
         requestBody.add(CODE, code);
 
-        webClient.post()
-                .uri(oauthTokenURI)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .body(BodyInserters.fromFormData(requestBody))
-                .retrieve()
-                .bodyToMono(AccessTokenResponse.class)
-                .subscribe(accessTokenResponse -> {
-                    AccessTokenDto accessTokenDto = accessTokenService.createAccessToken(accessTokenResponse);
-                    getUserInformation(accessTokenDto);
-                });
-
-        LinkedHashMap<String, String> mockToken = new LinkedHashMap<>();
-        mockToken.put("accessToken", "blahblah");
-        mockToken.put("refreshToken", "blahblah");
-        return ResponseEntity.ok(ApiResponseDto.OK(mockToken));
+        return requestBody;
     }
 
-    private void getUserInformation(AccessTokenDto accessTokenDto) {
-        WebClient otherClient = WebClient.create();
-
-        otherClient.get()
+    private Mono<AccountDto> getUserInformation(WebClient webClient, AccessTokenResponse accessTokenResponse) {
+        return webClient.get()
                 .uri(userInformationURI)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .header(AUTHORIZATION, BEARER_SCHEME + accessTokenDto.getAccessToken())
+                .header(AUTHORIZATION, BEARER_SCHEME + accessTokenResponse.getAccessToken())
                 .retrieve()
                 .bodyToMono(KakaoUserInformationResponse.class)
-                .subscribe(userInformationResponse ->
-                        accountService.createAccount(accessTokenDto, userInformationResponse));
+                .flatMap(kakaoUserInformationResponse -> {
+                    AccessTokenDto accessTokenDto = accessTokenService.createAccessToken(accessTokenResponse);
+                    return Mono.just(accountService.createAccount(accessTokenDto, kakaoUserInformationResponse));
+                });
     }
 }
