@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 public class AccountDto {
@@ -22,18 +23,18 @@ public class AccountDto {
 
     private String nickname;
 
-    private AccessToken accessToken;
+    private List<AccessToken> accessTokens;
 
     @Builder
     private AccountDto(Long id, Long kakaoId, LocalDateTime connectedAt,
-                       String email, Boolean isEmailVerified, String nickname, AccessToken accessToken) {
+                       String email, Boolean isEmailVerified, String nickname, List<AccessToken> accessTokens) {
         this.id = id;
         this.kakaoId = kakaoId;
         this.connectedAt = connectedAt;
         this.email = email;
         this.isEmailVerified = isEmailVerified;
         this.nickname = nickname;
-        this.accessToken = accessToken;
+        this.accessTokens = accessTokens;
     }
 
     public static AccountDto of(Account account) {
@@ -44,7 +45,7 @@ public class AccountDto {
                 .email(account.getEmail())
                 .isEmailVerified(account.getIsEmailVerified())
                 .nickname(account.getNickname())
-                .accessToken(account.getAccessToken())
+                .accessTokens(account.getAccessTokens())
                 .build();
     }
 }

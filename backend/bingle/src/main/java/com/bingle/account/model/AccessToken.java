@@ -7,8 +7,11 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -34,6 +37,10 @@ public class AccessToken {
     @Column(name = "refresh_token_expires_in")
     private Integer refreshTokenExpiresIn;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private Account account;
+
     @Builder
     private AccessToken(Long id, String accessToken, String refreshToken,
                         Integer expiresIn, Integer refreshTokenExpiresIn) {
@@ -42,5 +49,9 @@ public class AccessToken {
         this.refreshToken = refreshToken;
         this.expiresIn = expiresIn;
         this.refreshTokenExpiresIn = refreshTokenExpiresIn;
+    }
+
+    public void addAccount(Account account) {
+        this.account = account;
     }
 }

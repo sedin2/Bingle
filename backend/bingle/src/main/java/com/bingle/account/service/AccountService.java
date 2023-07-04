@@ -19,20 +19,20 @@ public class AccountService {
     private final AccessTokenRepository accessTokenRepository;
 
     @Transactional
-    public AccountDto createAccount(AccessTokenDto accessTokenDto, KakaoUserInformationResponse userInformationResponse) {
-        Account account = Account.builder()
-                .kakaoId(userInformationResponse.getId())
-                .connectedAt(userInformationResponse.getConnectedAt())
-                .email(userInformationResponse.getKakaoAccount().getEmail())
-                .isEmailVerified(userInformationResponse.getKakaoAccount().getIsEmailVerified())
-                .nickname(userInformationResponse.getKakaoAccount().getProfile().getNickname())
-                .build();
-
+    public AccountDto createAccount(AccessTokenDto accessTokenDto,
+                                    KakaoUserInformationResponse kakaoUserInformationResponse) {
         AccessToken accessToken = accessTokenRepository.findById(accessTokenDto.getId()).orElseThrow();
 
-        account.allocateAccessToken(accessToken);
-        accountRepository.save(account);
+        Account account = accountRepository.findByKakaoId(kakaoUserInformationResponse.getId())
+                .orElseGet(() -> Account.builder()
+                        .kakaoId(kakaoUserInformationResponse.getId())
+                        .connectedAt(kakaoUserInformationResponse.getConnectedAt())
+                        .email(kakaoUserInformationResponse.getKakaoAccount().getEmail())
+                        .isEmailVerified(kakaoUserInformationResponse.getKakaoAccount().getIsEmailVerified())
+                        .nickname(kakaoUserInformationResponse.getKakaoAccount().getProfile().getNickname())
+                        .build())
+                .addAccessToken(accessToken);
 
-        return AccountDto.of(account);
+        return AccountDto.of(accountRepository.save(account));
     }
 }
