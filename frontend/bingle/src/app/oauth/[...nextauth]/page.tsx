@@ -23,11 +23,12 @@ export default function OAuthPage() {
     data,
     error,
     isLoading,
-  }: { data: responseData; error: any; isLoading: boolean } =
-    useFetcher(getString);
+  }: { data: responseData; error: any; isLoading: boolean } = useFetcher(
+    getString,
+    'GET'
+  );
   useEffect(() => {
     if (data?.code == 'OK') {
-      console.log(data.data.accessToken);
       setAccessToken(data.data.accessToken);
       redirect('/');
     }
