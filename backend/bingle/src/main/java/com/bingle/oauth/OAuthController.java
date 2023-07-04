@@ -7,6 +7,8 @@ import com.bingle.account.service.AccountService;
 import com.bingle.common.dto.ApiResponseDto;
 import com.bingle.oauth.dto.AccessTokenResponse;
 import com.bingle.oauth.dto.KakaoUserInformationResponse;
+import com.bingle.oauth.dto.TokenDto;
+import com.bingle.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,11 +71,11 @@ public class OAuthController {
                 .bodyToMono(AccessTokenResponse.class)
                 .flatMap(accessTokenResponse -> getUserInformation(webClient, accessTokenResponse))
                 .map(accountDto -> {
-                    LinkedHashMap<String, String> mockToken = new LinkedHashMap<>();
-                    mockToken.put("accessToken", "blahblah");
-                    mockToken.put("refreshToken", "blahblah");
-                    ApiResponseDto responseDto = ApiResponseDto.OK(mockToken);
-                    return ResponseEntity.ok(responseDto);
+                    TokenDto tokens = TokenDto.builder()
+                            .accessToken(JwtUtil.generateAccessToken(String.valueOf(accountDto.getKakaoId())))
+                            .refreshToken(JwtUtil.generateRefreshToken(String.valueOf(accountDto.getKakaoId())))
+                            .build();
+                    return ResponseEntity.ok(ApiResponseDto.OK(tokens));
                 });
     }
 
