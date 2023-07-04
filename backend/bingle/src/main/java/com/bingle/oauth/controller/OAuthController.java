@@ -1,4 +1,4 @@
-package com.bingle.oauth;
+package com.bingle.oauth.controller;
 
 import com.bingle.account.dto.AccessTokenDto;
 import com.bingle.account.dto.AccountDto;
@@ -24,8 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.util.LinkedHashMap;
 
 @Slf4j
 @RestController
