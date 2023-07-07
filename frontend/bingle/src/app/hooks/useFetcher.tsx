@@ -13,13 +13,13 @@ type fetchArg = {
 const fetcher = ({ url, options }: fetchArg) =>
   fetch(url, options).then((r) => r.json());
 
-export default function useFetcher(url: string) {
+export default function useFetcher(url: string, method: string) {
   const [accessToken, setAccessToken] = useToken();
   const header = accessToken
     ? `'Content-Type': 'application/json', 'Authorization': 'Bearer ${accessToken}`
     : undefined;
   const { data, error, isLoading } = useSWR(
-    header ? { url, options: { method: 'GET', header } } : { url },
+    header ? { url, options: { method: method, header } } : { url },
     fetcher
   );
   return { data, error, isLoading };
