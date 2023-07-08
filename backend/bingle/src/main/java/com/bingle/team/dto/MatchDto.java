@@ -1,6 +1,9 @@
 package com.bingle.team.dto;
 
+import com.bingle.common.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -24,6 +27,8 @@ public class MatchDto {
     private String stadium;
 
     @JsonProperty("startDate")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime startDate;
 
     @JsonProperty("title")
