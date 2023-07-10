@@ -1,6 +1,7 @@
-package com.bingle.team.dto;
+package com.bingle.match.dto;
 
 import com.bingle.common.LocalDateTimeDeserializer;
+import com.bingle.team.dto.TeamDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

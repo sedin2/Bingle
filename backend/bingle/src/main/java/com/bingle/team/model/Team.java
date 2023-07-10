@@ -1,5 +1,6 @@
 package com.bingle.team.model;
 
+import com.bingle.match.model.Match;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +10,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.List;
 
 @Entity
 @Getter
@@ -60,6 +63,12 @@ public class Team {
 
     @Column(name = "order_point")
     private Long orderPoint;
+
+    @OneToMany(mappedBy = "homeTeam")
+    private List<Match> homeMatches;
+
+    @OneToMany(mappedBy = "awayTeam")
+    private List<Match> awayMatches;
 
     @Builder
     private Team(Long id, String teamId, String gameCode, String name, String nameAcronym, String nameEng,

@@ -1,5 +1,7 @@
-package com.bingle.team.dto;
+package com.bingle.esports.dto;
 
+import com.bingle.match.dto.MatchDto;
+import com.bingle.team.dto.TeamDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
