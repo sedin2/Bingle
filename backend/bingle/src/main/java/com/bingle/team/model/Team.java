@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -88,5 +89,7 @@ public class Team {
         this.dssWhiteImageUrl = dssWhiteImageUrl;
         this.dssBlackImageUrl = dssBlackImageUrl;
         this.orderPoint = orderPoint;
+        this.homeMatches = new ArrayList<>();
+        this.awayMatches = new ArrayList<>();
     }
 }

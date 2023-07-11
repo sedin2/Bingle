@@ -1,9 +1,13 @@
 package com.bingle.team.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TeamDto {
 
     @JsonProperty("teamId")
@@ -44,4 +48,23 @@ public class TeamDto {
 
     @JsonProperty("orderPoint")
     private Long orderPoint;
+
+    @Builder
+    private TeamDto(String teamId, String gameCode, String name, String nameAcronym, String nameEng,
+                   String nameEngAcronym, String imageUrl, String colorImageUrl, String whiteImageUrl,
+                   String blackImageUrl, String dssWhiteImageUrl, String dssBlackImageUrl, Long orderPoint) {
+        this.teamId = teamId;
+        this.gameCode = gameCode;
+        this.name = name;
+        this.nameAcronym = nameAcronym;
+        this.nameEng = nameEng;
+        this.nameEngAcronym = nameEngAcronym;
+        this.imageUrl = imageUrl;
+        this.colorImageUrl = colorImageUrl;
+        this.whiteImageUrl = whiteImageUrl;
+        this.blackImageUrl = blackImageUrl;
+        this.dssWhiteImageUrl = dssWhiteImageUrl;
+        this.dssBlackImageUrl = dssBlackImageUrl;
+        this.orderPoint = orderPoint;
+    }
 }
