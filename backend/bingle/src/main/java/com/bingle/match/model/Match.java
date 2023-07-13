@@ -13,14 +13,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Table(name = "match")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Match {
-
 
     @Id
     @GeneratedValue
@@ -43,7 +41,7 @@ public class Match {
     private String stadium;
 
     @Column(name = "start_date")
-    private LocalDateTime startDate;
+    private Long startDate;
 
     @Column(name = "title")
     private String title;
@@ -82,7 +80,7 @@ public class Match {
 
     @Builder
     private Match(Long id, String gameId, String leagueId, String topLeagueId, String gameCode,
-                  String stadium, LocalDateTime startDate, String title, Integer homeScore,
+                  String stadium, Long startDate, String title, Integer homeScore,
                   Integer awayScore, Integer weeks, Integer days, String winner, String matchStatus,
                   Integer maxMatchCount, Integer currentMatchSet, Team homeTeam, Team awayTeam) {
         this.id = id;
