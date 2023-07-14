@@ -19,42 +19,34 @@ public class TeamService {
     @Transactional
     public void addTeam(List<TeamDto> teamDtos) {
         List<Team> teams = teamDtos.stream()
-                .map(teamDto -> Team.builder()
-                        .teamId(teamDto.getTeamId())
-                        .gameCode(teamDto.getGameCode())
-                        .name(teamDto.getName())
-                        .nameAcronym(teamDto.getNameAcronym())
-                        .nameEng(teamDto.getNameEng())
-                        .nameEngAcronym(teamDto.getNameEngAcronym())
-                        .imageUrl(teamDto.getImageUrl())
-                        .colorImageUrl(teamDto.getColorImageUrl())
-                        .whiteImageUrl(teamDto.getWhiteImageUrl())
-                        .blackImageUrl(teamDto.getBlackImageUrl())
-                        .dssWhiteImageUrl(teamDto.getDssWhiteImageUrl())
-                        .dssBlackImageUrl(teamDto.getDssBlackImageUrl())
-                        .orderPoint(teamDto.getOrderPoint())
-                        .build())
+                .map(teamDto -> TeamDto.toEntity(teamDto))
                 .collect(Collectors.toList());
+
+        String tbd = "TBD";
+
+        Team undefinedTeam = Team.builder()
+                .teamId(tbd)
+                .gameCode(null)
+                .name(tbd)
+                .nameAcronym(tbd)
+                .nameEng(tbd)
+                .nameEngAcronym(tbd)
+                .imageUrl(null)
+                .colorImageUrl(null)
+                .whiteImageUrl(null)
+                .blackImageUrl(null)
+                .dssWhiteImageUrl(null)
+                .dssBlackImageUrl(null)
+                .orderPoint(0L)
+                .build();
+
+        teams.add(undefinedTeam);
         teamRepository.saveAll(teams);
     }
 
     public List<TeamDto> findTeams() {
         return teamRepository.findAll().stream()
-                .map(team -> TeamDto.builder()
-                        .teamId(team.getTeamId())
-                        .gameCode(team.getGameCode())
-                        .name(team.getName())
-                        .nameAcronym(team.getNameAcronym())
-                        .nameEng(team.getNameEng())
-                        .nameEngAcronym(team.getNameEngAcronym())
-                        .imageUrl(team.getImageUrl())
-                        .colorImageUrl(team.getColorImageUrl())
-                        .whiteImageUrl(team.getWhiteImageUrl())
-                        .blackImageUrl(team.getBlackImageUrl())
-                        .dssWhiteImageUrl(team.getDssWhiteImageUrl())
-                        .dssBlackImageUrl(team.getDssBlackImageUrl())
-                        .orderPoint(team.getOrderPoint())
-                        .build())
+                .map(team -> TeamDto.of(team))
                 .collect(Collectors.toList());
     }
 }

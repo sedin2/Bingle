@@ -8,6 +8,10 @@ import com.bingle.team.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,29 +27,21 @@ public class MatchService {
                 .map(matchDto -> {
                     Team homeTeam = teamRepository.findByTeamId(matchDto.getHomeTeam().getTeamId()).orElseThrow();
                     Team awayTeam = teamRepository.findByTeamId(matchDto.getAwayTeam().getTeamId()).orElseThrow();
-
-                    return Match.builder()
-                            .gameId(matchDto.getGameId())
-                            .leagueId(matchDto.getLeagueId())
-                            .topLeagueId(matchDto.getTopLeagueId())
-                            .gameCode(matchDto.getGameCode())
-                            .stadium(matchDto.getStadium())
-                            .startDate(matchDto.getStartDate())
-                            .title(matchDto.getTitle())
-                            .homeScore(matchDto.getHomeScore())
-                            .awayScore(matchDto.getAwayScore())
-                            .weeks(matchDto.getWeeks())
-                            .days(matchDto.getDays())
-                            .winner(matchDto.getWinner())
-                            .matchStatus(matchDto.getMatchStatus())
-                            .maxMatchCount(matchDto.getMaxMatchCount())
-                            .currentMatchSet(matchDto.getCurrentMatchSet())
-                            .homeTeam(homeTeam)
-                            .awayTeam(awayTeam)
-                            .build();
+                    return MatchDto.toEntity(matchDto, homeTeam, awayTeam);
                 })
                 .collect(Collectors.toList());
 
         matchRepository.saveAll(matches);
+    }
+
+    public List<MatchDto> findMatches(YearMonth month) {
+        LocalDate Month = month.atDay(1);
+        LocalDate nextMonth = month.plusMonths(1).atDay(1);
+        Long monthTimestamp = Month.atStartOfDay().atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
+        Long nextMonthTimestamp = nextMonth.atStartOfDay().atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
+        return matchRepository.findByStartDate(monthTimestamp, nextMonthTimestamp)
+                .stream()
+                .map(match -> MatchDto.of(match))
+                .collect(Collectors.toList());
     }
 }

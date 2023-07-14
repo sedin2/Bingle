@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -43,18 +45,24 @@ public class Account {
     @Column(name = "nickname", nullable = false, length = 8)
     private String nickname;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "subscription_status")
+    private SubscriptionStatus subscriptionStatus;
+
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AccessToken> accessTokens = new ArrayList<>();
 
     @Builder
-    private Account(Long id, Long kakaoId, LocalDateTime connectedAt,
-                    String email, Boolean isEmailVerified, String nickname) {
+    private Account(Long id, Long kakaoId, LocalDateTime connectedAt, String email, Boolean isEmailVerified,
+                   String nickname, SubscriptionStatus subscriptionStatus) {
         this.id = id;
         this.kakaoId = kakaoId;
         this.connectedAt = connectedAt;
         this.email = email;
         this.isEmailVerified = isEmailVerified;
         this.nickname = nickname;
+        this.subscriptionStatus = subscriptionStatus;
+        this.accessTokens = new ArrayList<>();
     }
 
     public Account addAccessToken(AccessToken accessToken) {

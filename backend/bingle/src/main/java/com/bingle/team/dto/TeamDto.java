@@ -1,5 +1,6 @@
 package com.bingle.team.dto;
 
+import com.bingle.team.model.Team;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -51,8 +52,8 @@ public class TeamDto {
 
     @Builder
     private TeamDto(String teamId, String gameCode, String name, String nameAcronym, String nameEng,
-                   String nameEngAcronym, String imageUrl, String colorImageUrl, String whiteImageUrl,
-                   String blackImageUrl, String dssWhiteImageUrl, String dssBlackImageUrl, Long orderPoint) {
+                    String nameEngAcronym, String imageUrl, String colorImageUrl, String whiteImageUrl,
+                    String blackImageUrl, String dssWhiteImageUrl, String dssBlackImageUrl, Long orderPoint) {
         this.teamId = teamId;
         this.gameCode = gameCode;
         this.name = name;
@@ -66,5 +67,41 @@ public class TeamDto {
         this.dssWhiteImageUrl = dssWhiteImageUrl;
         this.dssBlackImageUrl = dssBlackImageUrl;
         this.orderPoint = orderPoint;
+    }
+
+    public static Team toEntity(TeamDto teamDto) {
+        return Team.builder()
+                .teamId(teamDto.getTeamId())
+                .gameCode(teamDto.getGameCode())
+                .name(teamDto.getName())
+                .nameAcronym(teamDto.getNameAcronym())
+                .nameEng(teamDto.getNameEng())
+                .nameEngAcronym(teamDto.getNameEngAcronym())
+                .imageUrl(teamDto.getImageUrl())
+                .colorImageUrl(teamDto.getColorImageUrl())
+                .whiteImageUrl(teamDto.getWhiteImageUrl())
+                .blackImageUrl(teamDto.getBlackImageUrl())
+                .dssWhiteImageUrl(teamDto.getDssWhiteImageUrl())
+                .dssBlackImageUrl(teamDto.getDssBlackImageUrl())
+                .orderPoint(teamDto.getOrderPoint())
+                .build();
+    }
+
+    public static TeamDto of(Team team) {
+        return TeamDto.builder()
+                .teamId(team.getTeamId())
+                .gameCode(team.getGameCode())
+                .name(team.getName())
+                .nameAcronym(team.getNameAcronym())
+                .nameEng(team.getNameEng())
+                .nameEngAcronym(team.getNameEngAcronym())
+                .imageUrl(team.getImageUrl())
+                .colorImageUrl(team.getColorImageUrl())
+                .whiteImageUrl(team.getWhiteImageUrl())
+                .blackImageUrl(team.getBlackImageUrl())
+                .dssWhiteImageUrl(team.getDssWhiteImageUrl())
+                .dssBlackImageUrl(team.getDssBlackImageUrl())
+                .orderPoint(team.getOrderPoint())
+                .build();
     }
 }
