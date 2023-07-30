@@ -15,6 +15,13 @@ const LCKTeamList: string[] = [
   'OK저축은행',
 ];
 
+const tempVideoIdList: string[] = [
+  'DOmeNmh7EC4',
+  '1W3MIvKza0E',
+  'hpUZrRqqpkA',
+  'iOuGxm0U-Qw',
+];
+
 export default function HighLightPanel() {
   const [selectedTeam, setSelectedTeam] = useState(LCKTeamList[0]);
   return (
@@ -26,6 +33,18 @@ export default function HighLightPanel() {
             setSelected={setSelectedTeam}
             label={name}
             selected={name === selectedTeam}
+          />
+        ))}
+      </ul>
+      <ul className='grid grid-cols-1 xl:grid-cols-2 gap-3 mt-10'>
+        {tempVideoIdList.map((id) => (
+          <iframe
+            key={id}
+            id='player'
+            width='100%'
+            height='320'
+            src={`https://www.youtube.com/embed/${id}`}
+            frameBorder='0'
           />
         ))}
       </ul>
