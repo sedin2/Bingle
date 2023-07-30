@@ -1,6 +1,6 @@
 'use client';
 
-import LoginButton from './components/LoginButton';
+import HighLightPanel from './components/HighLightPanel';
 import TeamList from './components/TeamList';
 import useToken from './hooks/useToken';
 
@@ -9,18 +9,15 @@ export default function Home() {
   return (
     <section>
       {!accessToken && (
-        <div className='surface-0 text-700 text-center mt-10'>
-          <div className='text-blue-600 font-bold mb-3'>
-            <i className='pi pi-discord'></i>&nbsp;POWERED BY BINGLE
+        <>
+          <div>
+            <h1 className='text-bold text-3xl'>LCK 순위</h1>
           </div>
-          <div className='text-900 font-bold text-5xl mb-3'>Join Bingle!</div>
-          <div className='text-700 text-2xl mb-5'>
-            LCK Schedule Alert WebApp. <br /> T1 <br /> GEN G <br /> HANHWA{' '}
-            <br />
-            KT <br /> DRX <br /> KAWNGDONG
+          <div>
+            <h1 className='text-bold text-3xl'>경기 하이라이트</h1>
+            <HighLightPanel></HighLightPanel>
           </div>
-          <LoginButton></LoginButton>
-        </div>
+        </>
       )}
 
       {accessToken && (
