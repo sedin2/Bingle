@@ -1,6 +1,7 @@
 'use client';
 
 import HighLightPanel from './components/HighLightPanel';
+import RankTable from './components/RankTable';
 import TeamList from './components/TeamList';
 import useToken from './hooks/useToken';
 
@@ -10,11 +11,12 @@ export default function Home() {
     <section>
       {!accessToken && (
         <>
-          <div>
-            <h1 className='text-bold text-3xl'>LCK 순위</h1>
+          <div className='m-10'>
+            <h1 className='text-bold text-3xl m-5'>LCK 순위</h1>
+            <RankTable></RankTable>
           </div>
-          <div>
-            <h1 className='text-bold text-3xl'>경기 하이라이트</h1>
+          <div className='m-10'>
+            <h1 className='text-bold text-3xl m-5'>경기 하이라이트</h1>
             <HighLightPanel></HighLightPanel>
           </div>
         </>
