@@ -25,10 +25,10 @@ export default function useFetcher(
 ): { data: responseData; error: any; isLoading: Boolean } {
   const [accessToken, setAccessToken] = useToken();
   const header = accessToken
-    ? `'Content-Type': 'application/json', 'Authorization': 'Bearer ${accessToken}`
-    : undefined;
+    ? `'Content-Type': 'application/json', 'mode': 'no-cors', 'Authorization': 'Bearer ${accessToken}'`
+    : `'Content-Type': 'application/json', 'mode': 'no-cors'`;
   const { data, error, isLoading } = useSWR(
-    header ? { url, options: { method: method, header } } : { url },
+    header ? { url, options: { method, header } } : { url },
     fetcher
   );
   return { data, error, isLoading };
