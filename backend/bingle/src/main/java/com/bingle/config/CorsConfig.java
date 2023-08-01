@@ -11,15 +11,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class CorsConfig implements WebMvcConfigurer {
 
-    @Value("${CALLBACK_URI}")
-    private String callbackURI;
-
     @Value("${ORIGINS}")
     private String origins;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping(callbackURI)
+        registry.addMapping("/**")
                 .allowedOrigins(origins)
                 .allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name())
                 .allowCredentials(true);
