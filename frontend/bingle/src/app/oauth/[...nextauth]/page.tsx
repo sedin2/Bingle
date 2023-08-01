@@ -5,28 +5,12 @@ import { redirect, useSearchParams } from 'next/navigation';
 import { SetStateAction, Dispatch, useEffect } from 'react';
 import { PacmanLoader } from 'react-spinners';
 
-type responseData = {
-  code: string;
-  message: string;
-  data: {
-    accessToken: string;
-    refreshToken: string;
-  };
-};
-
 export default function OAuthPage() {
   const searchParams = useSearchParams();
   const code = searchParams.get('code');
   const getString = `http://localhost:8080/oauth/callback/kakao?code=${code}`;
   const setAccessToken = useToken()[1] as Dispatch<SetStateAction<string>>;
-  const {
-    data,
-    error,
-    isLoading,
-  }: { data: responseData; error: any; isLoading: boolean } = useFetcher(
-    getString,
-    'GET'
-  );
+  const { data, error, isLoading } = useFetcher(getString, 'GET');
   useEffect(() => {
     if (data?.code == 'OK') {
       setAccessToken(data.data.accessToken);

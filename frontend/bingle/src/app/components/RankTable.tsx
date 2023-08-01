@@ -25,7 +25,8 @@ const rows = [
   createData('KT', 5, 7, 9, -3),
 ];
 
-export default function RankTable() {
+export default function RankTable({ data }: any) {
+  console.log(data);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size='small' aria-label='a dense table'>
