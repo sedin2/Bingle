@@ -5,30 +5,38 @@ import com.bingle.match.service.MatchService;
 import com.bingle.team.service.TeamService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.context.ApplicationListener;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
 
 @Component
-@RequiredArgsConstructor
-public class OnBooting {
+public class OnBooting implements ApplicationListener<ApplicationReadyEvent> {
 
     private final TeamService teamService;
     private final MatchService matchService;
+    private final ResourceLoader resourceLoader;
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void onApplicationReady(ApplicationReadyEvent event) {
+    @Autowired
+    public OnBooting(TeamService teamService, MatchService matchService, ResourceLoader resourceLoader) {
+        this.teamService = teamService;
+        this.matchService = matchService;
+        this.resourceLoader = resourceLoader;
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationReadyEvent event) {
         ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        ClassPathResource resource = new ClassPathResource("23.json");
+        Resource resource = resourceLoader.getResource("classpath:23.json");
 
         try {
-            byte[] jsonData = Files.readAllBytes(Paths.get(resource.getURI()));
+            InputStream inputStream = resource.getInputStream();
+            byte[] jsonData = inputStream.readAllBytes();
 
             ESportsApiResponse eSportsApiResponse = objectMapper.readValue(jsonData, ESportsApiResponse.class);
 
