@@ -7,16 +7,19 @@ import com.bingle.team.model.Team;
 import com.bingle.team.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MatchService {
 
     private final MatchRepository matchRepository;
@@ -42,6 +45,21 @@ public class MatchService {
         return matchRepository.findByStartDate(monthTimestamp, nextMonthTimestamp)
                 .stream()
                 .map(match -> MatchDto.of(match))
+                .collect(Collectors.toList());
+    }
+
+    public void synchronize(List<MatchDto> newMatches) {
+        List<Match> matches = matchRepository.findAllByMatchStatusOrMatchStatus("BEFORE", "STARTED");
+        List<MatchDto> endMatches = newMatches.stream()
+                .filter(matchDto -> matchDto.getMatchStatus().equals("RESULT"))
+                .collect(Collectors.toList());
+
+        matches.stream()
+                .map(match -> endMatches.stream()
+                        .filter(endMatchDto -> endMatchDto.getGameId().equals(match.getGameId()))
+                        .findFirst()
+                        .map(matchDto -> match.synchronize(matchDto))
+                        .orElse(match))
                 .collect(Collectors.toList());
     }
 }

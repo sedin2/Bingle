@@ -12,4 +12,6 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
     @Query("SELECT m FROM Match m WHERE m.startDate >= :startDate AND m.startDate <= :endDate")
     List<Match> findByStartDate(Long startDate, Long endDate);
+
+    List<Match> findAllByMatchStatusOrMatchStatus(String matchStatus1, String matchStatus2);
 }

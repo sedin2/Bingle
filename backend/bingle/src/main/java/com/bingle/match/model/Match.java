@@ -1,5 +1,6 @@
 package com.bingle.match.model;
 
+import com.bingle.match.dto.MatchDto;
 import com.bingle.team.model.Team;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -101,5 +102,16 @@ public class Match {
         this.currentMatchSet = currentMatchSet;
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
+    }
+
+    public Match synchronize(MatchDto matchDto) {
+        this.homeScore = matchDto.getHomeScore();
+        this.awayScore = matchDto.getAwayScore();
+        this.winner = matchDto.getWinner();
+        this.matchStatus = matchDto.getMatchStatus();
+        this.maxMatchCount = matchDto.getMaxMatchCount();
+        this.currentMatchSet = matchDto.getCurrentMatchSet();
+        
+        return this;
     }
 }
