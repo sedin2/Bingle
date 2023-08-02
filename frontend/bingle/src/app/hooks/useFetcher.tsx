@@ -10,16 +10,25 @@ type fetchArg = {
   };
 };
 
+export type responseData = {
+  code: string;
+  message: string;
+  data: any;
+};
+
 const fetcher = ({ url, options }: fetchArg) =>
   fetch(url, options).then((r) => r.json());
 
-export default function useFetcher(url: string, method: string) {
+export default function useFetcher(
+  url: string,
+  method: string
+): { data: responseData; error: any; isLoading: Boolean } {
   const [accessToken, setAccessToken] = useToken();
   const header = accessToken
-    ? `'Content-Type': 'application/json', 'Authorization': 'Bearer ${accessToken}`
-    : undefined;
+    ? `'Content-Type': 'application/json', 'mode': 'no-cors', 'Authorization': 'Bearer ${accessToken}'`
+    : `'Content-Type': 'application/json', 'mode': 'no-cors'`;
   const { data, error, isLoading } = useSWR(
-    header ? { url, options: { method: method, header } } : { url },
+    header ? { url, options: { method, header } } : { url },
     fetcher
   );
   return { data, error, isLoading };

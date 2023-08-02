@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -6,51 +5,74 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
-function createData(
-  name: string,
-  rank: number,
-  wins: number,
-  loses: number,
-  diff: number
-) {
-  return { name, rank, wins, loses, diff };
+type Team = {
+  name: string;
+  orderPoint: number;
+  colorImageUrl: string;
+};
+
+function createData({ name, orderPoint, colorImageUrl }: Team) {
+  return { name, orderPoint, colorImageUrl };
 }
+let rows: any[] = [];
 
-const rows = [
-  createData('KT', 1, 15, 1, 26),
-  createData('젠지', 2, 15, 1, 25),
-  createData('한화생명', 3, 11, 5, 13),
-  createData('DK', 4, 10, 6, 8),
-  createData('KT', 5, 7, 9, -3),
-];
+const parseAndSetTeams = (setTeams: any, data: any) => {
+  if (!data.teams) return undefined;
+  console.log(data);
+  const teams = data.teams as Team[];
+  teams.forEach((team: Team) => {
+    rows.push(createData(team));
+  });
 
-export default function RankTable() {
+  rows.sort((teamA: any, teamB: any) => {
+    if (teamA.orderPoint > teamB.orderPoint) return 1;
+    else return 0;
+  });
+
+  setTeams(rows);
+};
+
+export default function orderPointTable({ data }: any) {
+  const [teams, setTeams] = useState<Team[]>([
+    { name: '', orderPoint: 0, colorImageUrl: '' },
+  ]);
+  useEffect(() => {
+    if (data) {
+      parseAndSetTeams(setTeams, data);
+    }
+  }, [data]);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size='small' aria-label='a dense table'>
         <TableHead>
           <TableRow>
             <TableCell>TEAM</TableCell>
-            <TableCell align='right'>순위</TableCell>
-            <TableCell align='right'>승</TableCell>
-            <TableCell align='right'>패</TableCell>
-            <TableCell align='right'>득실차</TableCell>
+            <TableCell align='right'>포인트</TableCell>
+            <TableCell align='right'>로고</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {teams.map((team) => (
             <TableRow
-              key={row.name}
+              key={team?.name}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component='th' scope='row'>
-                {row.name}
+                {team?.name}
               </TableCell>
-              <TableCell align='right'>{row.rank}</TableCell>
-              <TableCell align='right'>{row.wins}</TableCell>
-              <TableCell align='right'>{row.loses}</TableCell>
-              <TableCell align='right'>{row.diff}</TableCell>
+              <TableCell align='right'>{team?.orderPoint}</TableCell>
+              <TableCell align='right'>
+                {/* Todo : Change to next/image */}
+                <img
+                  alt='logo'
+                  src={team?.colorImageUrl || ''}
+                  height='150'
+                  width='150'
+                />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
