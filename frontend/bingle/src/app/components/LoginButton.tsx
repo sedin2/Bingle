@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import useToken from '../hooks/useToken';
 import { fetcher } from '../service/fetcher';
-import { queryString } from '../service/oAuth';
 
 export default function LoginButton() {
   const [accessToken, setAccessToken] = useToken();
@@ -23,7 +22,7 @@ export default function LoginButton() {
         </button>
       )}
       {!accessToken && (
-        <Link href={queryString} className='font-bold text-2xl'>
+        <Link href={'oauth/login/kakao'} className='font-bold text-2xl'>
           로그인
         </Link>
       )}
