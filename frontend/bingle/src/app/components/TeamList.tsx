@@ -3,49 +3,38 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import React, { useState } from 'react';
-
-const tempTeamArray = [
-  {
-    name: 'T1',
-    imgSrc: '',
-    secondaryText: 'LCK 1황',
-  },
-  {
-    name: 'DK',
-    imgSrc: '',
-    secondaryText: 'LCK 2황',
-  },
-  {
-    name: 'GEN G',
-    imgSrc: '',
-    secondaryText: 'LCK 3황',
-  },
-];
+import useTeams from '../hooks/useTeams';
+import { PacmanLoader } from 'react-spinners';
 
 export default function TeamList() {
   const [dense, setDense] = useState(false);
   const [secondary, setSecondary] = useState(true);
+  const { teams, error, isLoading } = useTeams();
   return (
     <div>
-      <List dense={dense}>
-        {tempTeamArray.map(({ name, imgSrc, secondaryText }) => (
-          <ListItem
-            secondaryAction={
-              <IconButton edge='end' aria-label='Add'>
-                <AddCircleIcon fontSize='large' />
-              </IconButton>
-            }
-          >
-            <ListItemAvatar>
-              <Avatar alt='temp' src={imgSrc}></Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={name}
-              secondary={secondary ? secondaryText : null}
-            ></ListItemText>
-          </ListItem>
-        ))}
-      </List>
+      {isLoading && <PacmanLoader size='120px'></PacmanLoader>}
+      {error && 'something error'}
+      {teams && (
+        <List dense={dense}>
+          {teams.map(({ name, colorImageUrl }) => (
+            <ListItem
+              secondaryAction={
+                <IconButton edge='end' aria-label='Add'>
+                  <AddCircleIcon fontSize='large' />
+                </IconButton>
+              }
+            >
+              <ListItemAvatar>
+                <Avatar alt='temp' src={colorImageUrl}></Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={name}
+                secondary={secondary ? 'secondary text' : null}
+              ></ListItemText>
+            </ListItem>
+          ))}
+        </List>
+      )}
     </div>
   );
 }
