@@ -2,6 +2,7 @@ package com.bingle.account.dto;
 
 import com.bingle.account.model.AccessToken;
 import com.bingle.account.model.Account;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,18 +12,23 @@ import java.util.List;
 @Getter
 public class AccountDto {
 
+    @JsonIgnore
     private Long id;
 
+    @JsonIgnore
     private Long kakaoId;
 
+    @JsonIgnore
     private LocalDateTime connectedAt;
 
     private String email;
 
+    @JsonIgnore
     private Boolean isEmailVerified;
 
     private String nickname;
 
+    @JsonIgnore
     private List<AccessToken> accessTokens;
 
     @Builder
