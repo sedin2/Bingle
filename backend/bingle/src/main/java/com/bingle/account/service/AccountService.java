@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AccountService {
 
     private final AccountRepository accountRepository;
     private final AccessTokenRepository accessTokenRepository;
 
-    @Transactional
     public AccountDto createAccount(AccessTokenDto accessTokenDto,
                                     KakaoUserInformationResponse kakaoUserInformationResponse) {
         AccessToken accessToken = accessTokenRepository.findById(accessTokenDto.getId()).orElseThrow();
@@ -34,5 +34,19 @@ public class AccountService {
                 .addAccessToken(accessToken);
 
         return AccountDto.of(accountRepository.save(account));
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isExistedNickname(String nickname) {
+        return accountRepository.existsByNickname(nickname);
+    }
+
+    public void updateNickname(Long kakaoId, String nickname) {
+        if (isExistedNickname(nickname)) {
+            throw new RuntimeException();
+        }
+
+        Account account = accountRepository.findByKakaoId(kakaoId).orElseThrow();
+        account.updateNickname(nickname);
     }
 }

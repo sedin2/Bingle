@@ -70,4 +70,8 @@ public class Account {
         accessTokens.add(accessToken);
         return this;
     }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }
