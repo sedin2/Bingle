@@ -22,15 +22,24 @@ Object.freeze(signUpSteps);
 
 export default function signUp() {
   //   const [signUpState, setSignUpState] = useState<signUpState[]>([]);
-  const [signUpStep, setSignUpStep] = useState(signUpSteps.IDLE_STEP);
+  const [signUpStep, setSignUpStep] = useState(signUpSteps.NICKNAME_STEP);
   const stepString = `(${signUpStep + 1}/${Object.keys(signUpSteps).length})`;
-  const setUser = useUser()[1];
+  const [user, setUser, isValidUser, setIsValidUser] = useUser();
   const goToNextStep = useCallback((userData: any) => {
     setUser(userData);
     setSignUpStep((prevStep) => prevStep + 1);
   }, []);
   const signUpRequest = useCallback((userData: any) => {
-    fetcher('http://localhost:8080/signup', 'POST', undefined, userData);
+    fetcher('http://localhost:8080/signup', 'POST', undefined, userData).then(
+      (response) => {
+        if (response.ok) {
+          setIsValidUser(true);
+          // Success Popup with redirect home button
+        } else {
+          // error popup, refresh signUp page (beginning from first step)
+        }
+      }
+    );
   }, []);
   const nextButtonObject = useMemo(() => {
     if (signUpStep < Object.keys(signUpSteps).length - 1) {
@@ -48,9 +57,14 @@ export default function signUp() {
   }, []);
 
   return (
-    <div>
+    <div className='flex flex-col'>
       {/* TODO : Handle react sliding when step changing */}
-      <>{<header>회원가입 ${stepString}</header>}</>
+      {/* TODO : prevent to access signUp page directly */}
+      {
+        <header className='font-bold text-3xl text-center'>
+          회원가입 {stepString}
+        </header>
+      }
       {/* TODO : Checking IDLE Step is necessary
             {
                 (signUpStep === signUpSteps.IDLE_STEP) &&
