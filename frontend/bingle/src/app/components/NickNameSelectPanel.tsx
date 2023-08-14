@@ -49,6 +49,19 @@ export default function NickNameSelectPanel({
       // Error popup (올바르지 않은 닉네임입니다.)
     }
   }, []);
+  const handleNext = useCallback(() => {
+    if (!isValidNickName(nickNameText) || !isNickNameChecked) {
+      // Error popup (닉네임이 올바르지 않거나 중복체크 되지 않았습니다.)
+      return;
+    }
+    setUser((user) => {
+      return { ...user, nickname: nickNameText };
+    });
+    if (useNextButton.onClick) {
+      const onClickFunc = useNextButton.onClick as () => void;
+      onClickFunc();
+    }
+  }, []);
   return (
     <div className='mt-10 text-center'>
       <h1 className='text-3xl font-bold'>닉네임 설정 🥰</h1>
