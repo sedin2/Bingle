@@ -9,18 +9,13 @@ import useToken from './hooks/useToken';
 
 export default function Home() {
   const accessToken = useToken()[0];
-  const getTeamListURL = 'http://localhost:8080/teams';
-  const { data, error, isLoading } = useFetcher(getTeamListURL, 'GET');
   return (
     <section>
       {!accessToken && (
         <>
           <div className='m-10'>
             <h1 className='text-bold text-3xl m-5'>LCK 순위</h1>
-            {isLoading && <PacmanLoader size={40} />}
-            {data && data.code === 'OK' ? (
-              <RankTable data={data.data}></RankTable>
-            ) : undefined}
+            <RankTable></RankTable>
           </div>
           <div className='m-10'>
             <h1 className='text-bold text-3xl m-5'>경기 하이라이트</h1>
