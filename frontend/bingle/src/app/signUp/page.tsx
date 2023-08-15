@@ -25,8 +25,8 @@ export default function signUp() {
   const [signUpStep, setSignUpStep] = useState(signUpSteps.NICKNAME_STEP);
   const stepString = `(${signUpStep + 1}/${Object.keys(signUpSteps).length})`;
   const [user, setUser, isValidUser, setIsValidUser] = useUser();
-  const goToNextStep = useCallback((userData: any) => {
-    setUser(userData);
+  console.log(user);
+  const goToNextStep = useCallback(() => {
     setSignUpStep((prevStep) => prevStep + 1);
   }, []);
   const signUpRequest = useCallback((userData: any) => {

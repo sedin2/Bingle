@@ -6,6 +6,7 @@ import { PacmanLoader } from 'react-spinners';
 import CheckIcon from '@mui/icons-material/Check';
 import ToggleButton from '@mui/material/ToggleButton';
 import { Button } from '@mui/material';
+import useUser from '../hooks/useUser';
 
 type useButton = {
   useThisButton: Boolean;
@@ -25,6 +26,7 @@ export default function TeamSelectPanel({
   const [secondary, setSecondary] = useState(true);
   const { teams, error, isLoading } = useTeams();
   const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+  const [user, setUser, isValidUser, setIsValidUser] = useUser();
   const handleSelected = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
       let tempTarget = event.target as any;
@@ -50,6 +52,19 @@ export default function TeamSelectPanel({
     },
     [selectedTeams]
   );
+  const handleNext = useCallback(() => {
+    if (selectedTeams.length === 0) {
+      // Error popup (구독할 팀을 한 개 이상 선택하세요!)
+      return;
+    }
+    setUser((user) => {
+      return { ...user, teamId: [...selectedTeams] };
+    });
+    if (useNextButton.onClick) {
+      const onClickFunc = useNextButton.onClick as () => void;
+      onClickFunc();
+    }
+  }, [selectedTeams]);
   return (
     <div>
       <div>
@@ -93,7 +108,7 @@ export default function TeamSelectPanel({
       </div>
       <div>
         {useNextButton.useThisButton && (
-          <Button onClick={useNextButton.onClick} variant='outlined'>
+          <Button onClick={handleNext} variant='outlined'>
             다음으로
           </Button>
         )}

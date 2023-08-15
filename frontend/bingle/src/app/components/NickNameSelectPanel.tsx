@@ -54,6 +54,7 @@ export default function NickNameSelectPanel({
       // Error popup (닉네임이 올바르지 않거나 중복체크 되지 않았습니다.)
       return;
     }
+    console.log(nickNameText);
     setUser((user) => {
       return { ...user, nickname: nickNameText };
     });
@@ -61,7 +62,7 @@ export default function NickNameSelectPanel({
       const onClickFunc = useNextButton.onClick as () => void;
       onClickFunc();
     }
-  }, []);
+  }, [nickNameText]);
   return (
     <div className='mt-10 text-center'>
       <h1 className='text-3xl font-bold'>닉네임 설정 🥰</h1>
@@ -97,7 +98,7 @@ export default function NickNameSelectPanel({
       </span>
       <div>
         {useNextButton.useThisButton && (
-          <Button onClick={useNextButton.onClick} variant='outlined'>
+          <Button onClick={handleNext} variant='outlined'>
             다음으로
           </Button>
         )}
