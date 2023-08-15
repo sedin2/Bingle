@@ -24,7 +24,10 @@ export default function OAuthPage({ params: { nextauth } }: props) {
   useEffect(() => {
     if (data?.code == 'OK') {
       setAccessToken(data.data.accessToken);
-      redirect('/');
+      // TODO : check valid user
+      // if (invalidUser) redirect('/signUp');
+      // else redirect('/');
+      redirect('/signUp');
     }
   }, [data]);
   return (

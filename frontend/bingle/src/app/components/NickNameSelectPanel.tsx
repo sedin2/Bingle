@@ -33,28 +33,34 @@ export default function NickNameSelectPanel({
     []
   );
   const repeatCheck = useCallback(() => {
-    if (isValidNickName(nickNameText)) {
-      fetcher(
-        'http://localhost:8080/nickname/check',
-        'POST',
-        undefined,
-        nickNameText
-      ).then((response) => {
-        if (response.ok) {
-          setIsNickNameChecked(true);
-        } else {
-        }
-      });
-    } else {
-      // Error popup (올바르지 않은 닉네임입니다.)
-    }
+    setIsNickNameChecked(true);
+
+    /* TODO : change to fetch when api implemeneted */
+    //   if (isValidNickName(nickNameText)) {
+    //     fetcher(
+    //       'http://localhost:8080/nickname/check',
+    //       'POST',
+    //       undefined,
+    //       nickNameText
+    //     ).then((response) => {
+    //       if (response.ok) {
+    //         setIsNickNameChecked(true);
+    //       } else {
+    //       }
+    //     });
+    //   } else {
+    //     // Error popup (올바르지 않은 닉네임입니다.)
+    //   }
   }, []);
   const handleNext = useCallback(() => {
     if (!isValidNickName(nickNameText) || !isNickNameChecked) {
       // Error popup (닉네임이 올바르지 않거나 중복체크 되지 않았습니다.)
+      console.log(nickNameText);
+      console.log(isValidNickName(nickNameText));
+      console.log(isNickNameChecked);
+      console.log('닉네임이 올바르지 않거나 중복체크 되지 않았습니다.');
       return;
     }
-    console.log(nickNameText);
     setUser((user) => {
       return { ...user, nickname: nickNameText };
     });
@@ -62,7 +68,7 @@ export default function NickNameSelectPanel({
       const onClickFunc = useNextButton.onClick as () => void;
       onClickFunc();
     }
-  }, [nickNameText]);
+  }, [isNickNameChecked]);
   return (
     <div className='mt-10 text-center'>
       <h1 className='text-3xl font-bold'>닉네임 설정 🥰</h1>
@@ -77,6 +83,7 @@ export default function NickNameSelectPanel({
             value={nickNameText}
             onChange={handleChange}
             color='success'
+            disabled={isNickNameChecked ? true : false}
           ></TextField>
         ) : (
           <TextField
@@ -85,6 +92,7 @@ export default function NickNameSelectPanel({
             helperText='2자 이상 10자 미만으로 입력해 주세요!'
             value={nickNameText}
             onChange={handleChange}
+            disabled={isNickNameChecked ? true : false}
           ></TextField>
         )}
       </span>

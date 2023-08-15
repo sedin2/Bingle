@@ -7,23 +7,15 @@ import useUser from '../hooks/useUser';
 import { fetcher } from '../service/fetcher';
 
 const signUpSteps = {
-  IDLE_STEP: 0,
   NICKNAME_STEP: 1,
   TEAM_SELECT_STEP: 2,
   NOTIFICATION_SELECT_STEP: 3,
 };
 Object.freeze(signUpSteps);
 
-// type signUpState = {
-//   step: number;
-//   data: Object;
-//   isComplete: boolean;
-// };
-
 export default function signUp() {
-  //   const [signUpState, setSignUpState] = useState<signUpState[]>([]);
   const [signUpStep, setSignUpStep] = useState(signUpSteps.NICKNAME_STEP);
-  const stepString = `(${signUpStep + 1}/${Object.keys(signUpSteps).length})`;
+  const stepString = `(${signUpStep}/${Object.keys(signUpSteps).length})`;
   const [user, setUser, isValidUser, setIsValidUser] = useUser();
   console.log(user);
   const goToNextStep = useCallback(() => {
@@ -42,22 +34,22 @@ export default function signUp() {
     );
   }, []);
   const nextButtonObject = useMemo(() => {
-    if (signUpStep < Object.keys(signUpSteps).length - 1) {
+    if (signUpStep < Object.keys(signUpSteps).length) {
       return { useThisButton: true, onClick: goToNextStep };
     } else {
       return { useThisButton: false, onClick: undefined };
     }
-  }, []);
+  }, [signUpStep]);
   const saveButtonObject = useMemo(() => {
-    if (signUpStep < Object.keys(signUpSteps).length - 1) {
+    if (signUpStep < Object.keys(signUpSteps).length) {
       return { useThisButton: false, onClick: undefined };
     } else {
       return { useThisButton: true, onClick: signUpRequest };
     }
-  }, []);
+  }, [signUpStep]);
 
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col bg-indigo-300 h-full'>
       {/* TODO : Handle react sliding when step changing */}
       {/* TODO : prevent to access signUp page directly */}
       {
@@ -65,29 +57,31 @@ export default function signUp() {
           회원가입 {stepString}
         </header>
       }
-      {/* TODO : Checking IDLE Step is necessary
+      <div className='w-2/3 m-auto bg-white rounded-lg'>
+        {/* TODO : Checking IDLE Step is necessary
             {
                 (signUpStep === signUpSteps.IDLE_STEP) &&
                 
             } */}
-      {signUpStep === signUpSteps.NICKNAME_STEP && (
-        <NickNameSelectPanel
-          useNextButton={nextButtonObject}
-          useSaveButton={saveButtonObject}
-        />
-      )}
-      {signUpStep === signUpSteps.TEAM_SELECT_STEP && (
-        <TeamSelectPanel
-          useNextButton={nextButtonObject}
-          useSaveButton={saveButtonObject}
-        />
-      )}
-      {signUpStep === signUpSteps.NOTIFICATION_SELECT_STEP && (
-        <NotificationSelectPanel
-          useNextButton={nextButtonObject}
-          useSaveButton={saveButtonObject}
-        />
-      )}
+        {signUpStep === signUpSteps.NICKNAME_STEP && (
+          <NickNameSelectPanel
+            useNextButton={nextButtonObject}
+            useSaveButton={saveButtonObject}
+          />
+        )}
+        {signUpStep === signUpSteps.TEAM_SELECT_STEP && (
+          <TeamSelectPanel
+            useNextButton={nextButtonObject}
+            useSaveButton={saveButtonObject}
+          />
+        )}
+        {signUpStep === signUpSteps.NOTIFICATION_SELECT_STEP && (
+          <NotificationSelectPanel
+            useNextButton={nextButtonObject}
+            useSaveButton={saveButtonObject}
+          />
+        )}
+      </div>
     </div>
   );
 }
