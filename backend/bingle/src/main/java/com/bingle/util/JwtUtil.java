@@ -16,7 +16,7 @@ import java.util.Date;
 public class JwtUtil {
 
     private static Key secretKey;
-    private static final String BEARER = "Bearer ";
+    private static final String BEARER_SCHEME = "Bearer ";
     private static final Duration ACCESS_TOKEN_EXPIRATION = Duration.ofHours(6);
     private static final Duration REFRESH_TOKEN_EXPIRATION = Duration.ofDays(60);
 
@@ -57,16 +57,8 @@ public class JwtUtil {
                 .getBody();
     }
 
-    public boolean isValidToken(String token) {
-        if (!isBearerScheme(token)) {
-            return false;
-        }
-
-        return true;
-    }
-
     public static boolean isBearerScheme(String token) {
-        if (token.startsWith(BEARER)) {
+        if (token.startsWith(BEARER_SCHEME)) {
             return true;
         }
 
