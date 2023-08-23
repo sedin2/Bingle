@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import NickNameSelectPanel from '../components/NickNameSelectPanel';
 import NotificationSelectPanel from '../components/NotificationSelectPanel';
@@ -54,6 +55,16 @@ export default function signUp() {
       {/* TODO : prevent to access signUp page directly */}
       {
         <header className='font-bold text-3xl text-center'>
+          {signUpStep !== signUpSteps.NICKNAME_STEP && (
+            <Button
+              onClick={() => {
+                setSignUpStep((prev) => prev - 1);
+              }}
+              variant='outlined'
+            >
+              뒤로 가기
+            </Button>
+          )}
           회원가입 {stepString}
         </header>
       }
