@@ -29,7 +29,6 @@ public class AccountService {
                         .connectedAt(kakaoUserInformationResponse.getConnectedAt())
                         .email(kakaoUserInformationResponse.getKakaoAccount().getEmail())
                         .isEmailVerified(kakaoUserInformationResponse.getKakaoAccount().getIsEmailVerified())
-                        .nickname(kakaoUserInformationResponse.getKakaoAccount().getProfile().getNickname())
                         .build())
                 .addAccessToken(accessToken);
 

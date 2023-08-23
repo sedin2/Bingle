@@ -1,5 +1,6 @@
 package com.bingle.account.model;
 
+import com.bingle.accountteamsubscription.model.AccountTeamSubscription;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,12 +9,11 @@ import lombok.NoArgsConstructor;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,13 +21,13 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "account")
+@Table(name = "accounts")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account {
 
     @Id
     @GeneratedValue
-    @Column(name = "account_id")
+    @Column(name = "accounts_id")
     private Long id;
 
     @Column(name = "kakao_id")
@@ -42,26 +42,31 @@ public class Account {
     @Column(name = "is_email_verified")
     private Boolean isEmailVerified;
 
-    @Column(name = "nickname", nullable = false, length = 8)
+    @Column(name = "nickname", length = 8)
     private String nickname;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "subscription_status")
-    private SubscriptionStatus subscriptionStatus;
+    @Column(name = "is_account_active")
+    private Boolean isAccountActive;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AccessToken> accessTokens = new ArrayList<>();
 
+    @OneToOne(mappedBy = "account")
+    private Notification notification;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AccountTeamSubscription> subscribedTeams;
+
     @Builder
     private Account(Long id, Long kakaoId, LocalDateTime connectedAt, String email, Boolean isEmailVerified,
-                   String nickname, SubscriptionStatus subscriptionStatus) {
+                   String nickname) {
         this.id = id;
         this.kakaoId = kakaoId;
         this.connectedAt = connectedAt;
         this.email = email;
         this.isEmailVerified = isEmailVerified;
         this.nickname = nickname;
-        this.subscriptionStatus = subscriptionStatus;
+        this.isAccountActive = false;
         this.accessTokens = new ArrayList<>();
     }
 
