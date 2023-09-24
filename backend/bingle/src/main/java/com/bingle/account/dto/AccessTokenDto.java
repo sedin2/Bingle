@@ -3,8 +3,10 @@ package com.bingle.account.dto;
 import com.bingle.account.model.AccessToken;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class AccessTokenDto {
 
     private Long id;

@@ -17,7 +17,7 @@ import javax.persistence.Table;
 
 @Entity
 @Getter
-@Table(name = "match")
+@Table(name = "matches")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Match {
 

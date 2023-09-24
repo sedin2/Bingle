@@ -7,7 +7,7 @@ import com.bingle.account.service.AccountService;
 import com.bingle.common.dto.ApiResponseDto;
 import com.bingle.oauth.dto.AccessTokenResponse;
 import com.bingle.oauth.dto.KakaoUserInformationResponse;
-import com.bingle.oauth.dto.TokenDto;
+import com.bingle.oauth.dto.OAuthResponseDto;
 import com.bingle.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,17 +18,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/oauth/callback")
 public class OAuthController {
 
     private static final String AUTHORIZATION = "Authorization";
@@ -57,7 +58,7 @@ public class OAuthController {
 
     private final AccessTokenService accessTokenService;
 
-    @GetMapping("/kakao")
+    @GetMapping("/oauth/callback/kakao")
     public Mono<ResponseEntity<ApiResponseDto>> getCode(@RequestParam String code) {
         WebClient webClient = WebClient.create();
 
@@ -69,12 +70,21 @@ public class OAuthController {
                 .bodyToMono(AccessTokenResponse.class)
                 .flatMap(accessTokenResponse -> getUserInformation(webClient, accessTokenResponse))
                 .map(accountDto -> {
-                    TokenDto tokens = TokenDto.builder()
+                    OAuthResponseDto oAuthResponseDto = OAuthResponseDto.builder()
+                            .isAccountActive(accountDto.getIsAccountActive())
+                            .account(accountDto)
                             .accessToken(JwtUtil.generateAccessToken(String.valueOf(accountDto.getKakaoId())))
                             .refreshToken(JwtUtil.generateRefreshToken(String.valueOf(accountDto.getKakaoId())))
                             .build();
-                    return ResponseEntity.ok(ApiResponseDto.OK(tokens));
+                    log.info("OAuthResponseDto: {}", oAuthResponseDto);
+                    return ResponseEntity.ok(ApiResponseDto.OK(oAuthResponseDto));
                 });
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponseDto> logout(HttpServletRequest request) {
+        String authorization = request.getHeader("Authorization");
+        return ResponseEntity.ok(ApiResponseDto.OK("OK"));
     }
 
     private MultiValueMap<String, String> createRequestBody(String code) {

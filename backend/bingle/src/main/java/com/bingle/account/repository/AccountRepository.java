@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Optional<Account> findByKakaoId(Long kakaoId);
+
+    boolean existsByNickname(String nickname);
 }

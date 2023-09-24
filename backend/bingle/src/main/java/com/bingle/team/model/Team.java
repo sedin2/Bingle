@@ -1,23 +1,28 @@
 package com.bingle.team.model;
 
 import com.bingle.match.model.Match;
+import com.bingle.player.model.Player;
+import com.bingle.teamranking.model.TeamRanking;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "team")
+@Table(name = "teams")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Team {
 
@@ -65,16 +70,23 @@ public class Team {
     @Column(name = "order_point")
     private Long orderPoint;
 
-    @OneToMany(mappedBy = "homeTeam")
+    @OneToMany(mappedBy = "homeTeam", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Match> homeMatches;
 
-    @OneToMany(mappedBy = "awayTeam")
+    @OneToMany(mappedBy = "awayTeam", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Match> awayMatches;
 
+    @OneToOne(mappedBy = "team")
+    private TeamRanking teamRanking;
+
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Player> players;
+
     @Builder
-    private Team(Long id, String teamId, String gameCode, String name, String nameAcronym, String nameEng,
-                 String nameEngAcronym, String imageUrl, String colorImageUrl, String whiteImageUrl,
-                 String blackImageUrl, String dssWhiteImageUrl, String dssBlackImageUrl, Long orderPoint) {
+    private Team(Long id, String teamId, String gameCode, String name, String nameAcronym,
+                 String nameEng, String nameEngAcronym, String imageUrl, String colorImageUrl,
+                 String whiteImageUrl, String blackImageUrl, String dssWhiteImageUrl,
+                 String dssBlackImageUrl, Long orderPoint, TeamRanking teamRanking) {
         this.id = id;
         this.teamId = teamId;
         this.gameCode = gameCode;
@@ -91,5 +103,7 @@ public class Team {
         this.orderPoint = orderPoint;
         this.homeMatches = new ArrayList<>();
         this.awayMatches = new ArrayList<>();
+        this.teamRanking = teamRanking;
+        this.players = new ArrayList<>();
     }
 }
