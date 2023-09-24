@@ -1,0 +1,15 @@
+{
+  "name": "binglebot",
+  "version": "1.0.0",
+  "description": "binglebot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node node_modules/ws/index.js"
+  },
+  "author": "GAAMZA",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.13.0"
+  }
+}
