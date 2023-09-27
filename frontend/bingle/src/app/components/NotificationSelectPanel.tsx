@@ -3,6 +3,8 @@ import { useCallback, useState } from 'react';
 import useUser from '../hooks/useUser';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import ModalButton from './ui/ModalButton';
+import Link from 'next/link';
 
 type useButton = {
   useThisButton: Boolean;
@@ -55,6 +57,7 @@ export default function NotificationSelectPanel({
   const [user, setUser, isValidUser, setIsValidUser] = useUser();
   const [dense, setDense] = useState(false);
   const [secondary, setSecondary] = useState(false);
+  const modalDescription = `${user.nickname}님 가입 축하드려요 :D`;
   const handleSave = useCallback(() => {
     setUser((user) => {
       return {
@@ -116,9 +119,19 @@ export default function NotificationSelectPanel({
         </Button>
       )}
       {useSaveButton.useThisButton && (
-        <Button onClick={handleSave} variant='outlined'>
-          회원가입 완료
-        </Button>
+        <ModalButton
+          buttonText='회원가입 완료'
+          modalTitle='회원가입 완료!'
+          modalDescription={modalDescription}
+        >
+          <Link
+            className='bg-lime-600 text-bold text-black text-3xl text-center'
+            href='/'
+            onClick={() => handleSave()}
+          >
+            홈으로!
+          </Link>
+        </ModalButton>
       )}
     </div>
   );

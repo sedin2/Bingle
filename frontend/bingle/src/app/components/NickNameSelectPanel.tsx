@@ -2,7 +2,6 @@
 import { Button, TextField } from '@mui/material';
 import { useCallback, useState } from 'react';
 import useUser from '../hooks/useUser';
-import { fetcher } from '../service/fetcher';
 import CheckIcon from '@mui/icons-material/Check';
 
 type useButton = {
@@ -34,7 +33,6 @@ export default function NickNameSelectPanel({
   );
   const repeatCheck = useCallback(() => {
     setIsNickNameChecked(true);
-
     /* TODO : change to fetch when api implemeneted */
     //   if (isValidNickName(nickNameText)) {
     //     fetcher(

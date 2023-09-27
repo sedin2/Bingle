@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@mui/material';
+import { Button, Modal } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import NickNameSelectPanel from '../components/NickNameSelectPanel';
 import NotificationSelectPanel from '../components/NotificationSelectPanel';
