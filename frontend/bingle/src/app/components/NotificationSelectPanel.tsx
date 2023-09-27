@@ -16,14 +16,6 @@ type props = {
   useSaveButton: useButton;
 };
 
-type notifications = {
-  isScheduleNotification: Boolean;
-  isLiveMatchLink: Boolean;
-  isMatchHighlight: Boolean;
-  isMatchWeeklyReport: Boolean;
-  isSpoiler: Boolean;
-};
-
 const notificationOptions = [
   {
     english: 'isScheduleNotification',
@@ -58,9 +50,9 @@ export default function NotificationSelectPanel({
   const [dense, setDense] = useState(false);
   const [secondary, setSecondary] = useState(false);
   const modalDescription = `${user.nickname}님 가입 축하드려요 :D`;
-  const handleSave = useCallback(() => {
-    setUser((user) => {
-      return {
+  const handleSave = useCallback(
+    (signUpRequest) => {
+      const newUser: User = {
         ...user,
         notifications: {
           isScheduleNotification: notifications[0],
@@ -70,9 +62,12 @@ export default function NotificationSelectPanel({
           isSpoiler: notifications[4],
         },
       };
-    });
-    // Success popup ('회원가입이 완료되었습니다 축하드려요 {닉네임}님 홈으로 가기 버튼')
-  }, [notifications]);
+      setUser((user) => newUser);
+      signUpRequest(newUser);
+      // Success popup ('회원가입이 완료되었습니다 축하드려요 {닉네임}님 홈으로 가기 버튼')
+    },
+    [notifications]
+  );
   return (
     <div>
       <h1 className='font-bold text-3xl text-center'>알림톡 정보 선택</h1>
@@ -127,7 +122,7 @@ export default function NotificationSelectPanel({
           <Link
             className='bg-lime-600 text-bold text-black text-3xl text-center'
             href='/'
-            onClick={() => handleSave()}
+            onClick={() => handleSave(useSaveButton.onClick)}
           >
             홈으로!
           </Link>
