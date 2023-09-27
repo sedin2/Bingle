@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import NickNameSelectPanel from '../components/NickNameSelectPanel';
 import NotificationSelectPanel from '../components/NotificationSelectPanel';
 import TeamSelectPanel from '../components/TeamSelectPanel';
+import MotionWrapper from '../components/ui/MotionWrapper';
 import useUser from '../hooks/useUser';
 import { fetcher } from '../service/fetcher';
 
@@ -50,49 +51,51 @@ export default function signUp() {
   }, [signUpStep]);
 
   return (
-    <div className='flex flex-col bg-indigo-300 h-full'>
-      {/* TODO : Handle react sliding when step changing */}
-      {/* TODO : prevent to access signUp page directly */}
-      {
-        <header className='font-bold text-3xl text-center'>
-          {signUpStep !== signUpSteps.NICKNAME_STEP && (
-            <Button
-              onClick={() => {
-                setSignUpStep((prev) => prev - 1);
-              }}
-              variant='outlined'
-            >
-              뒤로 가기
-            </Button>
-          )}
-          회원가입 {stepString}
-        </header>
-      }
-      <div className='w-2/3 m-auto bg-white rounded-lg'>
-        {/* TODO : Checking IDLE Step is necessary
+    <MotionWrapper key={signUpStep}>
+      <div className='flex flex-col bg-indigo-300 h-full'>
+        {/* TODO : Handle react sliding when step changing */}
+        {/* TODO : prevent to access signUp page directly */}
+        {
+          <header className='font-bold text-3xl text-center'>
+            {signUpStep !== signUpSteps.NICKNAME_STEP && (
+              <Button
+                onClick={() => {
+                  setSignUpStep((prev) => prev - 1);
+                }}
+                variant='outlined'
+              >
+                뒤로 가기
+              </Button>
+            )}
+            회원가입 {stepString}
+          </header>
+        }
+        <div className='w-2/3 m-auto bg-white rounded-lg'>
+          {/* TODO : Checking IDLE Step is necessary
             {
                 (signUpStep === signUpSteps.IDLE_STEP) &&
                 
             } */}
-        {signUpStep === signUpSteps.NICKNAME_STEP && (
-          <NickNameSelectPanel
-            useNextButton={nextButtonObject}
-            useSaveButton={saveButtonObject}
-          />
-        )}
-        {signUpStep === signUpSteps.TEAM_SELECT_STEP && (
-          <TeamSelectPanel
-            useNextButton={nextButtonObject}
-            useSaveButton={saveButtonObject}
-          />
-        )}
-        {signUpStep === signUpSteps.NOTIFICATION_SELECT_STEP && (
-          <NotificationSelectPanel
-            useNextButton={nextButtonObject}
-            useSaveButton={saveButtonObject}
-          />
-        )}
+          {signUpStep === signUpSteps.NICKNAME_STEP && (
+            <NickNameSelectPanel
+              useNextButton={nextButtonObject}
+              useSaveButton={saveButtonObject}
+            />
+          )}
+          {signUpStep === signUpSteps.TEAM_SELECT_STEP && (
+            <TeamSelectPanel
+              useNextButton={nextButtonObject}
+              useSaveButton={saveButtonObject}
+            />
+          )}
+          {signUpStep === signUpSteps.NOTIFICATION_SELECT_STEP && (
+            <NotificationSelectPanel
+              useNextButton={nextButtonObject}
+              useSaveButton={saveButtonObject}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </MotionWrapper>
   );
 }
